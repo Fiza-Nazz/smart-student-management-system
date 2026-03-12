@@ -23,8 +23,8 @@ export default function RootLayout({
     <html lang="en" className={poppins.variable}>
       <body className="antialiased flex min-h-screen bg-slate-50 text-slate-900 font-sans transition-all duration-300">
         <Sidebar />
-        <main className="flex-1 ml-72 p-8 sm:p-12 transition-all duration-300">
-          <div className="max-w-7xl mx-auto animation-fade-in">
+        <main className="flex-1 lg:ml-72 p-4 sm:p-8 md:p-12 transition-all duration-300 w-full overflow-x-hidden">
+          <div className="max-w-7xl mx-auto animation-fade-in py-10 lg:py-4">
             {children}
           </div>
         </main>

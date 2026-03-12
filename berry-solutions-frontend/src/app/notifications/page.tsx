@@ -34,74 +34,79 @@ export default function NotificationsPage() {
   };
 
   return (
-    <div>
-      <div className="mb-10">
-        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 mb-2">WhatsApp Notifications</h1>
-        <p className="text-slate-500 text-lg">Send automated WhatsApp alerts and reports to parents</p>
+    <div className="space-y-6 md:space-y-10">
+      <div className="animation-fade-in">
+        <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-slate-900 mb-2">Communications Hub</h1>
+        <p className="text-slate-500 text-base md:text-lg max-w-2xl">Broadcast automated notifications and reports via the WhatsApp gateway.</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10">
         {/* Send Form */}
-        <div className="glass-panel rounded-3xl p-8 shadow-sm relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-          <h2 className="text-2xl font-bold mb-6 text-slate-800 flex items-center gap-2 relative z-10"><span className="text-emerald-500">💬</span> Send Message</h2>
+        <div className="glass-panel rounded-[2rem] p-6 md:p-10 shadow-2xl shadow-blue-900/[0.03] relative overflow-hidden border border-slate-200/50">
+          <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+          <h2 className="text-2xl font-black mb-8 text-slate-800 flex items-center gap-3 relative z-10">
+            <span className="p-2 bg-emerald-50 rounded-xl text-emerald-600">💬</span> Dispatch Center
+          </h2>
 
           {/* Type Selection */}
-          <div className="space-y-3 mb-6 relative z-10">
-            <label className="block text-sm font-bold text-slate-700 uppercase tracking-wide">Select Message Type</label>
-            <div className="grid grid-cols-1 gap-3">
+          <div className="space-y-4 mb-8 relative z-10">
+            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Select Protocol</label>
+            <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-3">
               {notifTypes.map((t) => (
                 <button
                   key={t.value}
                   onClick={() => setType(t.value)}
-                  className={`w-full text-left p-4 rounded-2xl border transition-all duration-300 flex items-center shadow-sm ${type === t.value
-                      ? "border-blue-300 bg-blue-50 ring-2 ring-blue-500/20 translate-x-1"
-                      : "border-slate-200 hover:bg-slate-50 hover:border-blue-200"
+                  className={`group w-full text-left p-4 rounded-2xl border-2 transition-all duration-300 flex items-center shadow-sm ${type === t.value
+                    ? "border-blue-500 bg-blue-50/50 shadow-blue-500/10"
+                    : "border-slate-100 bg-white hover:border-slate-200"
                     }`}
                 >
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center text-xl mr-4 shadow-sm transition-colors ${type === t.value ? 'bg-blue-100 text-blue-600' : 'bg-white'}`}>
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl mr-4 shadow-sm transition-all group-active:scale-90 ${type === t.value ? 'bg-blue-600 text-white' : 'bg-slate-50 text-slate-400'}`}>
                     {t.icon}
                   </div>
-                  <div>
-                    <span className={`font-bold block ${type === t.value ? 'text-blue-800' : 'text-slate-700'}`}>{t.label}</span>
-                    <span className="text-sm text-slate-500">{t.desc}</span>
+                  <div className="flex-1">
+                    <span className={`font-black block text-sm tracking-tight ${type === t.value ? 'text-blue-900' : 'text-slate-700'}`}>{t.label}</span>
+                    <span className={`text-[10px] font-medium leading-none ${type === t.value ? 'text-blue-600/70' : 'text-slate-400 hidden sm:block'}`}>{t.desc}</span>
                   </div>
                 </button>
               ))}
             </div>
           </div>
 
-          <div className="space-y-5 relative z-10">
+          <div className="space-y-6 relative z-10">
             {/* Phone */}
-            <div>
-              <label className="block text-sm font-bold text-slate-700 uppercase tracking-wide mb-2">Parent WhatsApp Number <span className="text-red-500">*</span></label>
-              <input
-                type="text" value={phone} onChange={(e) => setPhone(e.target.value)}
-                placeholder="e.g., 923001234567"
-                className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all shadow-sm font-mono"
-              />
+            <div className="space-y-2">
+              <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Guardian Contact (WhastApp)</label>
+              <div className="relative group">
+                <span className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">92</span>
+                <input
+                  type="text" value={phone} onChange={(e) => setPhone(e.target.value)}
+                  placeholder="300 1234567"
+                  className="w-full pl-12 pr-5 py-4 bg-slate-50 border-2 border-slate-50 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all shadow-inner font-mono text-lg font-bold text-slate-700"
+                />
+              </div>
             </div>
 
             {/* Student Name */}
-            <div>
-              <label className="block text-sm font-bold text-slate-700 uppercase tracking-wide mb-2">Student Full Name <span className="text-red-500">*</span></label>
+            <div className="space-y-2">
+              <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Recipient Identity</label>
               <input
                 type="text" value={name} onChange={(e) => setName(e.target.value)}
-                placeholder="e.g., Ali Khan"
-                className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all shadow-sm"
+                placeholder="Full student name..."
+                className="w-full px-5 py-4 bg-slate-50 border-2 border-slate-50 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all shadow-inner font-bold text-slate-700"
               />
             </div>
 
             {/* Additional Data */}
             {(type === "late" || type === "report") && (
-              <div className="animation-fade-in">
-                <label className="block text-sm font-bold text-slate-700 uppercase tracking-wide mb-2">
-                  {type === "late" ? "Arrival Time" : "Report Details"} <span className="text-slate-400 font-normal normal-case">(Optional)</span>
+              <div className="animation-fade-in space-y-2">
+                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                  {type === "late" ? "Temporal Data (Time)" : "Performance Metrics"}
                 </label>
                 <input
                   type="text" value={additionalData} onChange={(e) => setAdditionalData(e.target.value)}
-                  placeholder={type === "late" ? "e.g., 8:45 AM" : "e.g., Final Term Score: 85%"}
-                  className="w-full px-5 py-3.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all shadow-sm"
+                  placeholder={type === "late" ? "e.g., 08:30 AM" : "e.g., Attendance: 95%"}
+                  className="w-full px-5 py-4 bg-slate-50 border-2 border-slate-50 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all shadow-inner font-bold text-slate-700"
                 />
               </div>
             )}
@@ -110,25 +115,29 @@ export default function NotificationsPage() {
           <button
             onClick={handleSend}
             disabled={loading || !phone || !name}
-            className="w-full mt-8 px-6 py-4 bg-emerald-600 text-white rounded-xl shadow-lg shadow-emerald-500/30 hover:bg-emerald-700 hover:-translate-y-1 transition-all duration-300 font-bold text-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:hover:translate-y-0"
+            className="w-full mt-10 px-6 py-5 bg-emerald-600 text-white rounded-2xl shadow-xl shadow-emerald-600/20 hover:bg-emerald-700 hover:-translate-y-1 transition-all duration-300 font-black text-xl flex items-center justify-center gap-3 disabled:opacity-30 active:scale-95"
           >
-            {loading ? "⏳ Sending Message..." : "📤 Dispatch Notification"}
+            {loading ? "Initializing Gateway..." : "Transmit Notification"}
           </button>
 
           {/* Result */}
           {result && (
-            <div className={`mt-6 p-5 rounded-2xl animation-fade-in border shadow-sm ${result.success ? "bg-emerald-50 border-emerald-200 text-emerald-800" : "bg-red-50 border-red-200 text-red-800"}`}>
-              <p className="font-bold flex items-center gap-2">
-                <span className="text-xl">{result.success ? "✅" : "⚠️"}</span>
+            <div className={`mt-8 p-6 rounded-2xl animation-fade-in border-2 shadow-sm ${result.success ? "bg-white border-emerald-100 text-emerald-900" : "bg-white border-red-100 text-red-900"}`}>
+              <p className="font-black text-lg flex items-center gap-3">
+                <span className={`w-8 h-8 rounded-lg flex items-center justify-center ${result.success ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}`}>
+                  {result.success ? "✓" : "!"}
+                </span>
                 {result.message}
               </p>
               {result.simulated && (
-                <div className="mt-3 flex items-start gap-2 bg-white/60 p-3 rounded-lg border border-white">
-                  <span className="text-amber-500">⚡</span>
-                  <p className="text-xs font-medium text-slate-600">
-                    <strong className="text-slate-800 block mb-0.5">Simulation Mode Active</strong>
-                    Message was intercepted and logged. WhatsApp client is not verified or system is running in Dev mode.
-                  </p>
+                <div className="mt-4 flex items-start gap-3 bg-blue-50/50 p-4 rounded-xl border border-blue-100">
+                  <span className="text-xl animate-pulse">⚡</span>
+                  <div>
+                    <strong className="text-blue-900 block text-xs font-black uppercase tracking-widest mb-1">Sandbox Environment Active</strong>
+                    <p className="text-xs font-medium text-slate-500 leading-relaxed">
+                      Outgoing transmission was intercepted by the simulation layer. Physical delivery is bypassed in non-production cycles.
+                    </p>
+                  </div>
                 </div>
               )}
             </div>
@@ -136,36 +145,43 @@ export default function NotificationsPage() {
         </div>
 
         {/* History */}
-        <div className="glass-panel rounded-3xl overflow-hidden flex flex-col h-[800px] shadow-sm border border-slate-200">
-          <div className="p-8 border-b border-slate-100 bg-slate-50 relative overflow-hidden">
+        <div className="glass-panel rounded-[2rem] overflow-hidden flex flex-col h-[600px] md:h-full min-h-[500px] shadow-2xl shadow-slate-900/[0.02] border border-slate-200/50">
+          <div className="p-6 md:p-8 border-b border-slate-100 bg-slate-50/50 backdrop-blur-sm relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
-            <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2 relative z-10"><span>📜</span> Delivery Logs</h2>
-            <p className="text-sm text-slate-500 mt-2 relative z-10">Recent notifications sent during this session</p>
+            <h2 className="text-xl md:text-2xl font-black text-slate-800 flex items-center gap-3 relative z-10">
+              <span className="p-2 bg-white rounded-xl shadow-sm">📜</span> Transmission History
+            </h2>
+            <p className="text-sm text-slate-500 mt-2 font-medium relative z-10">Real-time audit log of all communications dispatched in this session.</p>
           </div>
-          <div className="flex-1 overflow-y-auto bg-white/30 p-4">
+
+          <div className="flex-1 overflow-y-auto bg-white p-4 custom-scrollbar">
             {history.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-center p-8 opacity-60">
-                <div className="text-5xl mb-4">📭</div>
-                <p className="font-bold text-slate-700 text-lg">No history yet</p>
-                <p className="text-slate-500 text-sm mt-2">Sent notifications will appear here</p>
+              <div className="flex flex-col items-center justify-center h-full text-center p-12 space-y-4 opacity-40">
+                <div className="text-6xl grayscale transition-all group-hover:grayscale-0">📡</div>
+                <div>
+                  <p className="font-black text-slate-800 text-xl tracking-tight">Log Empty</p>
+                  <p className="text-slate-400 text-sm">Awaiting first transmission...</p>
+                </div>
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {history.map((h, i) => (
-                  <div key={i} className={`p-4 rounded-2xl border transition-all hover:shadow-md ${h.success ? "bg-white border-slate-100" : "bg-red-50 border-red-100"}`}>
-                    <div className="flex justify-between items-start mb-2">
-                      <div className="flex items-center gap-2">
-                        <span className={`w-8 h-8 rounded-full flex items-center justify-center ${h.success ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}`}>
+                  <div key={i} className={`p-5 rounded-2xl border-2 transition-all hover:shadow-xl ${h.success ? "bg-white border-slate-50 hover:border-emerald-100" : "bg-red-50/30 border-red-50 hover:border-red-100"}`}>
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="flex items-center gap-3">
+                        <span className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm shadow-sm ${h.success ? 'bg-emerald-50 text-emerald-600' : 'bg-red-100 text-red-600'}`}>
                           {h.success ? "✓" : "✗"}
                         </span>
-                        <span className="font-bold text-slate-800 uppercase tracking-wide text-xs">{h.type}</span>
+                        <div>
+                          <span className="font-black text-slate-900 text-sm block tracking-tight uppercase leading-none mb-1">{h.type}</span>
+                          <span className="text-[10px] font-bold text-slate-400 tracking-widest">{h.time}</span>
+                        </div>
                       </div>
-                      <span className="text-xs font-mono text-slate-400 bg-slate-50 px-2 py-1 rounded">{h.time}</span>
                     </div>
-                    <div className="ml-10">
-                      <p className="text-sm font-medium text-slate-900 mb-0.5">{h.name}</p>
-                      <p className="text-xs text-slate-500 font-mono mb-2">{h.phone}</p>
-                      <p className={`text-xs ${h.success ? 'text-emerald-600' : 'text-red-500'}`}>{h.message}</p>
+                    <div className="pl-13 space-y-1">
+                      <p className="text-base font-black text-slate-800 tracking-tight">{h.name}</p>
+                      <p className="text-xs text-blue-600 font-bold font-mono tracking-tight">{h.phone}</p>
+                      <p className={`text-xs mt-3 font-medium ${h.success ? 'text-slate-500' : 'text-red-500'}`}>{h.message}</p>
                     </div>
                   </div>
                 ))}

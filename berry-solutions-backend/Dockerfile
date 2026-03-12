@@ -60,6 +60,12 @@ RUN npm install --production
 
 COPY . .
 
+# Set permissions for the WhatsApp session directory
+RUN mkdir -p /app/whatsapp-session && chown -R node:node /app
+
+USER node
+
+
 # Hugging Face Spaces default port is 7860
 ENV PORT=7860
 EXPOSE 7860
