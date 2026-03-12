@@ -1,0 +1,565 @@
+{
+  "info": {
+    "name": "Berry Solutions - School Management API",
+    "description": "Complete API collection for Berry Solutions School Management System.\n\nIncludes:\n- Student Management (CRUD)\n- RFID Attendance System\n- WhatsApp Parent Notifications\n\nBase URL: http://localhost:5000/api/v1",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "studentId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "item": [
+        {
+          "name": "Server Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/health",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["health"]
+            },
+            "description": "Check if the server is running and healthy."
+          },
+          "response": []
+        },
+        {
+          "name": "API Root Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}",
+              "host": ["{{baseUrl}}"]
+            },
+            "description": "Get API version info and available endpoints."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "1. Student Management",
+      "item": [
+        {
+          "name": "Add Student",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.success && jsonData.data) {",
+                  "    pm.environment.set('studentId', jsonData.data._id);",
+                  "    pm.collectionVariables.set('studentId', jsonData.data._id);",
+                  "}",
+                  "",
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Response has success true', function () {",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test('Student has auto-generated studentId', function () {",
+                  "    pm.expect(jsonData.data.studentId).to.match(/^STU-/);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Zain Ahmed\",\n  \"dateOfBirth\": \"2010-05-15\",\n  \"class\": \"8th\",\n  \"section\": \"A\",\n  \"parentName\": \"Ahmed Khan\",\n  \"parentPhoneNumber\": \"923001234567\",\n  \"address\": \"DHA Phase 5, Lahore\",\n  \"rfidCardId\": \"RFID-123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/students",
+              "host": ["{{baseUrl}}"],
+              "path": ["students"]
+            },
+            "description": "Add a new student to the system.\n\nAll fields are required:\n- fullName, dateOfBirth, class, section\n- parentName, parentPhoneNumber, address\n- rfidCardId\n\nstudentId and admissionDate are auto-generated."
+          },
+          "response": []
+        },
+        {
+          "name": "Add Student (Validation Error)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"\",\n  \"dateOfBirth\": \"invalid-date\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/students",
+              "host": ["{{baseUrl}}"],
+              "path": ["students"]
+            },
+            "description": "Test validation: sending incomplete/invalid data should return 400 with validation errors."
+          },
+          "response": []
+        },
+        {
+          "name": "Search Students",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "",
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has count and data array', function () {",
+                  "    pm.expect(jsonData).to.have.property('count');",
+                  "    pm.expect(jsonData.data).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/students/search?query=Zain",
+              "host": ["{{baseUrl}}"],
+              "path": ["students", "search"],
+              "query": [
+                {
+                  "key": "query",
+                  "value": "Zain",
+                  "description": "Search by name, studentId, or rfidCardId"
+                }
+              ]
+            },
+            "description": "Search students by name, student ID, or RFID card ID.\n\nQuery parameter 'query' is required (min 2 characters)."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Student Details",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "",
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Student data is returned', function () {",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "    pm.expect(jsonData.data).to.have.property('fullName');",
+                  "    pm.expect(jsonData.data).to.have.property('rfidCardId');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/students/{{studentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["students", "{{studentId}}"]
+            },
+            "description": "Get a single student's details by MongoDB _id.\n\nReplace {{studentId}} with an actual student _id."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Student",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "",
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Student is updated', function () {",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "    pm.expect(jsonData.data.section).to.eql('B');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"section\": \"B\",\n  \"address\": \"Model Town, Lahore\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/students/{{studentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["students", "{{studentId}}"]
+            },
+            "description": "Update a student's profile. All fields are optional.\n\nReplace {{studentId}} with an actual student _id."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Student",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "",
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Student deleted successfully', function () {",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "    pm.expect(jsonData.message).to.include('deleted');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/students/{{studentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["students", "{{studentId}}"]
+            },
+            "description": "Delete a student from the system.\n\nReplace {{studentId}} with an actual student _id."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. RFID Attendance System",
+      "item": [
+        {
+          "name": "RFID Scan - Check In",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "",
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Check-in recorded', function () {",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "    pm.expect(jsonData.type).to.eql('check-in');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rfidCardId\": \"RFID-123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/attendance/rfid-scan",
+              "host": ["{{baseUrl}}"],
+              "path": ["attendance", "rfid-scan"]
+            },
+            "description": "Record attendance via RFID card scan.\n\nLogic:\n- First scan of the day = Check-in\n- Second scan of the day = Check-out\n- Check-in after 8:00 AM = Marked as Late\n\nOnly requires rfidCardId in the body."
+          },
+          "response": []
+        },
+        {
+          "name": "RFID Scan - Check Out (2nd scan)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "",
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Check-out recorded', function () {",
+                  "    pm.expect(jsonData.success).to.eql(true);",
+                  "    pm.expect(jsonData.type).to.eql('check-out');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rfidCardId\": \"RFID-123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/attendance/rfid-scan",
+              "host": ["{{baseUrl}}"],
+              "path": ["attendance", "rfid-scan"]
+            },
+            "description": "Second scan of the same day records Check-out.\n\nSame endpoint and body as Check-in. The backend automatically determines if it's check-in or check-out."
+          },
+          "response": []
+        },
+        {
+          "name": "RFID Scan - Invalid Card",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rfidCardId\": \"INVALID-CARD-999\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/attendance/rfid-scan",
+              "host": ["{{baseUrl}}"],
+              "path": ["attendance", "rfid-scan"]
+            },
+            "description": "Test with an invalid RFID card. Should return 404 - Student not found."
+          },
+          "response": []
+        },
+        {
+          "name": "RFID Scan - Missing Card ID",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/attendance/rfid-scan",
+              "host": ["{{baseUrl}}"],
+              "path": ["attendance", "rfid-scan"]
+            },
+            "description": "Test with empty body. Should return 400 - RFID Card ID is required."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. WhatsApp Notifications",
+      "item": [
+        {
+          "name": "Send Absence Notification",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "",
+                  "pm.test('Notification sent or WhatsApp not ready', function () {",
+                  "    pm.expect([200, 503]).to.include(pm.response.code);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"absence\",\n  \"parentPhone\": \"923001234567\",\n  \"studentName\": \"Zain Ahmed\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/notifications/send",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "send"]
+            },
+            "description": "Send an absence notification to a parent via WhatsApp.\n\nNote: WhatsApp client must be authenticated (QR scanned) for this to work. If not authenticated, returns 503."
+          },
+          "response": []
+        },
+        {
+          "name": "Send Late Arrival Notification",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "",
+                  "pm.test('Notification sent or WhatsApp not ready', function () {",
+                  "    pm.expect([200, 503]).to.include(pm.response.code);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"late\",\n  \"parentPhone\": \"923001234567\",\n  \"studentName\": \"Zain Ahmed\",\n  \"additionalData\": \"8:30 AM\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/notifications/send",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "send"]
+            },
+            "description": "Send a late arrival notification to a parent via WhatsApp.\n\nOptional 'additionalData' field can be used to pass the arrival time."
+          },
+          "response": []
+        },
+        {
+          "name": "Send Monthly Report Notification",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "",
+                  "pm.test('Notification sent or WhatsApp not ready', function () {",
+                  "    pm.expect([200, 503]).to.include(pm.response.code);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"report\",\n  \"parentPhone\": \"923001234567\",\n  \"studentName\": \"Zain Ahmed\",\n  \"additionalData\": \"Attendance: 95%, Grades: A+, Behavior: Excellent\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/notifications/send",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "send"]
+            },
+            "description": "Send a monthly progress report to a parent via WhatsApp.\n\nOptional 'additionalData' field can be used to pass the report summary."
+          },
+          "response": []
+        },
+        {
+          "name": "Send Notification - Validation Error",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"invalid_type\",\n  \"parentPhone\": \"\",\n  \"studentName\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/notifications/send",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "send"]
+            },
+            "description": "Test validation: invalid type and empty fields should return 400 with validation errors."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
